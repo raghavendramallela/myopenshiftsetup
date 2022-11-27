@@ -13,6 +13,7 @@
     crc-linux-2.10.1-amd64/crc
 
     $ sudo mv ~/Downloads/crc-linux-2.10.1-amd64/crc /usr/local/bin/ 
+    ```
 - Download the `pull-secret.txt` from the [redhat openshift local console](https://console.redhat.com/openshift/create/local)
 - Check for crc version: 
     ``` 
@@ -21,9 +22,10 @@
     OpenShift version: 4.11.7
     Podman version: 4.2.0
     ```
-- Run `crc setup` :
+- Run `crc setup` for checking dependencies like `libvirt`, `KVM`, `NetworkManager` & download `crcbundle` :
     ```
     $ crc setup
+
     INFO Using bundle path /home/raghu/.crc/cache/crc_libvirt_4.11.7_amd64.crcbundle 
     INFO Checking if running as non-root              
     INFO Checking if running inside WSL2              
@@ -58,11 +60,12 @@
     oc: 118.14 MiB / 118.14 MiB ------------------------------] 100.00%
     Your system is correctly setup for using CRC. Use 'crc start' to start the instance
     ```
-- Run `crc start` pointed towards the downloaded `pull-secret.txt` 
+- Run `crc start` pointed towards the downloaded `pull-secret.txt` to start openshift local container:
 
     (can also use `--memory int` or `--cpu int` flags to limit host-machine's resources, check `crc start --help` ): 
     ```
     $ crc start -p ~/Downloads/pull-secret.txt
+
     INFO Checking if running as non-root              
     INFO Checking if running inside WSL2              
     INFO Checking if crc-admin-helper executable is cached 
@@ -138,85 +141,58 @@
     Use the 'oc' command line interface:
     $ eval $(crc oc-env)
     $ oc login -u developer https://api.crc.testing:6443
-- Start using `oc` commands: (equivalent of `kubectl` for openshift)
     ```
+- Check the openshift local container status:
+    ```
+    $ crc status
+
+    CRC VM:          Running
+    OpenShift:       Running (v4.11.7)
+    Podman:          
+    Disk Usage:      16.21GB of 32.74GB (Inside the CRC VM)
+    Cache Usage:     16.43GB
+    Cache Directory: /home/raghu/.crc/cache
+    ```
+- Set up environment variables & start using `oc` (OpenShift-cli) commands:
+    ```
+    $ crc oc-env
     $ eval $(crc oc-env)
+
+    $ crc console --credentials
+    To login as a regular user, run 'oc login -u developer -p developer https://api.crc.testing:6443'.
+    To login as an admin, run 'oc login -u kubeadmin -p GHE8B-uSRJn-5u8Sg-T7J7a https://api.crc.testing:6443
+    
+    $ oc version
+    Client Version: 4.11.7
+    Kustomize Version: v4.5.4
+    Server Version: 4.11.7
+    Kubernetes Version: v1.24.0+3882f8f
+
     $ oc login -u kubeadmin https://api.crc.testing:6443
     Logged into "https://api.crc.testing:6443" as "kubeadmin" using existing credentials.
-
     You have access to 66 projects, the list has been suppressed. You can list all projects with 'oc projects'
 
-    $ oc get node -o wide
-
+    $ oc get nodes -o wide
     NAME                 STATUS   ROLES           AGE   VERSION           INTERNAL-IP      EXTERNAL-IP   OS-IMAGE                                                        KERNEL-VERSION                 CONTAINER-RUNTIME
     crc-lgph7-master-0   Ready    master,worker   54d   v1.24.0+3882f8f   192.168.126.11   <none>        Red Hat Enterprise Linux CoreOS 411.86.202209211811-0 (Ootpa)   4.18.0-372.26.1.el8_6.x86_64   cri-o://1.24.2-7.rhaos4.11.gitca400e0.el8
+    ```
+- Set up `oc completion` (Output shell completion):
+    ```
+    $ oc completion -h
+    ```
+- Set up `oc completion` for a non-root user (raghu) for zshell oc completion:
+    ```
+    # login to root user:
 
-    $ oc get namespace
+    $ sudo -i
+    $ mkdir -p /usr/local/share/zsh/site-functions
+    $ touch /usr/local/share/zsh/site-functions/_oc
+    $ chmod +rx /usr/local/share/zsh/site-functions/_oc
+    $ chown raghu /usr/local/share/zsh/site-functions/_oc
+    $ exit
+    
+    # logged out of root user back in to non root user:
+    
+    $ source <(oc completion zsh)
+    $ oc completion zsh > "${fpath[1]}/_oc"
 
-    NAME                                               STATUS   AGE
-    default                                            Active   54d
-    kube-node-lease                                    Active   54d
-    kube-public                                        Active   54d
-    kube-system                                        Active   54d
-    openshift                                          Active   54d
-    openshift-apiserver                                Active   54d
-    openshift-apiserver-operator                       Active   54d
-    openshift-authentication                           Active   54d
-    openshift-authentication-operator                  Active   54d
-    openshift-cloud-controller-manager                 Active   54d
-    openshift-cloud-controller-manager-operator        Active   54d
-    openshift-cloud-credential-operator                Active   54d
-    openshift-cloud-network-config-controller          Active   54d
-    openshift-cluster-csi-drivers                      Active   54d
-    openshift-cluster-machine-approver                 Active   54d
-    openshift-cluster-node-tuning-operator             Active   54d
-    openshift-cluster-samples-operator                 Active   54d
-    openshift-cluster-storage-operator                 Active   54d
-    openshift-cluster-version                          Active   54d
-    openshift-config                                   Active   54d
-    openshift-config-managed                           Active   54d
-    openshift-config-operator                          Active   54d
-    openshift-console                                  Active   54d
-    openshift-console-operator                         Active   54d
-    openshift-console-user-settings                    Active   54d
-    openshift-controller-manager                       Active   54d
-    openshift-controller-manager-operator              Active   54d
-    openshift-dns                                      Active   54d
-    openshift-dns-operator                             Active   54d
-    openshift-etcd                                     Active   54d
-    openshift-etcd-operator                            Active   54d
-    openshift-host-network                             Active   54d
-    openshift-image-registry                           Active   54d
-    openshift-infra                                    Active   54d
-    openshift-ingress                                  Active   54d
-    openshift-ingress-canary                           Active   54d
-    openshift-ingress-operator                         Active   54d
-    openshift-insights                                 Active   54d
-    openshift-kni-infra                                Active   54d
-    openshift-kube-apiserver                           Active   54d
-    openshift-kube-apiserver-operator                  Active   54d
-    openshift-kube-controller-manager                  Active   54d
-    openshift-kube-controller-manager-operator         Active   54d
-    openshift-kube-scheduler                           Active   54d
-    openshift-kube-scheduler-operator                  Active   54d
-    openshift-kube-storage-version-migrator-operator   Active   54d
-    openshift-machine-api                              Active   54d
-    openshift-machine-config-operator                  Active   54d
-    openshift-marketplace                              Active   54d
-    openshift-monitoring                               Active   54d
-    openshift-multus                                   Active   54d
-    openshift-network-diagnostics                      Active   54d
-    openshift-network-operator                         Active   54d
-    openshift-node                                     Active   54d
-    openshift-nutanix-infra                            Active   54d
-    openshift-oauth-apiserver                          Active   54d
-    openshift-openstack-infra                          Active   54d
-    openshift-operator-lifecycle-manager               Active   54d
-    openshift-operators                                Active   54d
-    openshift-ovirt-infra                              Active   54d
-    openshift-route-controller-manager                 Active   54d
-    openshift-sdn                                      Active   54d
-    openshift-service-ca                               Active   54d
-    openshift-service-ca-operator                      Active   54d
-    openshift-user-workload-monitoring                 Active   54d
-    openshift-vsphere-infra                            Active   54d
