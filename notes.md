@@ -47,4 +47,17 @@
 
         oc new-project <projectname>
     ```
-- 
+- Create a sample project `sampleproj`
+    ```
+    $ oc new-project sampleproj
+
+    Now using project "sampleproj" on server "https://api.crc.testing:6443".
+
+    You can add applications to this project with the 'new-app' command. For example, try:
+
+        oc new-app rails-postgresql-example
+
+    to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
+
+        kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
+    ```
