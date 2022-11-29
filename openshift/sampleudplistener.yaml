@@ -22,7 +22,7 @@ spec:
         deployment: udp-listener
     spec:
       containers:
-      - image: mendhak/udp-listener
+      - image: docker.io/mendhak/udp-listener
         name: udp-listener
         ports:
         - containerPort: 5005
