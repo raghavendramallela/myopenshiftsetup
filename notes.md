@@ -171,3 +171,17 @@
     deployment.apps "samplemysqlapp" deleted
     service "samplemysqlapp" deleted
     ```
+- Stop OpenShift local:
+    ```
+    $ crc stop
+    INFO Stopping kubelet and all containers...       
+    INFO Stopping the instance, this may take a few minutes... 
+    Stopped the instance
+
+    $ crc status
+    CRC VM:          Stopped
+    OpenShift:       Stopped (v4.11.7)
+    Podman:          
+    Disk Usage:      0B of 0B (Inside the CRC VM)
+    Cache Usage:     16.43GB
+    Cache Directory: /home/raghu/.crc/cache

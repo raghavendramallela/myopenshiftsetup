@@ -152,6 +152,9 @@
     Disk Usage:      16.21GB of 32.74GB (Inside the CRC VM)
     Cache Usage:     16.43GB
     Cache Directory: /home/raghu/.crc/cache
+
+    $ crc ip
+    192.168.130.11
     ```
 - Set up environment variables & start using `oc` (OpenShift-cli) commands:
     ```
