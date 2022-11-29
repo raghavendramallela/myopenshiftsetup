@@ -60,7 +60,7 @@
     to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
 
         kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
-- Deploy a sample nginx hello app:
+1. Deploy a sample nginx hello app:
     ```
     $ oc create -f https://raw.githubusercontent.com/raghavendramallela/myopenshiftsetup/main/openshift/samplenginx.yaml
 
@@ -117,7 +117,7 @@
     service "samplenginx" deleted
     route.route.openshift.io "samplenginx" deleted
     ```
-- Deploy a sample my sql app:
+2. Deploy a sample my sql app:
     ```
     $ oc create -f https://raw.githubusercontent.com/raghavendramallela/myopenshiftsetup/main/openshift/sampleappmysql.yaml
 
