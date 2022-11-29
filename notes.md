@@ -61,3 +61,6 @@
 
         kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
     ```
+- Deploy a sample my sql app
+    ```
+    $ oc create -f 
