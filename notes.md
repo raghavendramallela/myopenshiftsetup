@@ -61,6 +61,54 @@
 
         kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
     ```
-- Deploy a sample my sql app
+- Deploy a sample my sql app:
     ```
-    $ oc create -f 
+    $ oc create -f https://raw.githubusercontent.com/raghavendramallela/myopenshiftsetup/main/openshift/sampleappmysql.yaml
+
+    secret/samplemysqlsecret created
+    Warning: would violate PodSecurity "restricted:v1.24": allowPrivilegeEscalation != false (container "samplemysqlapp" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "samplemysqlapp" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "samplemysqlapp" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "samplemysqlapp" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+    deployment.apps/samplemysqlapp created
+    service/samplemysqlapp created
+    ```
+- Check `samplemysqlapp` resources:
+    ```
+    $ oc get all
+    NAME                                READY   STATUS    RESTARTS   AGE
+    pod/samplemysqlapp-66b466db-9kpm2   1/1     Running   0          13s
+
+    NAME                     TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+    service/samplemysqlapp   ClusterIP   10.217.4.224   <none>        3306/TCP   13s
+
+    NAME                             READY   UP-TO-DATE   AVAILABLE   AGE
+    deployment.apps/samplemysqlapp   1/1     1            1           13s
+
+    NAME                                      DESIRED   CURRENT   READY   AGE
+    replicaset.apps/samplemysqlapp-66b466db   1         1         1       13s
+    ```
+- Log in to the dabase:
+    ```
+    $ oc exec -it pod/samplemysqlapp-66b466db-9kpm2 -- bash
+    
+    bash-4.2$ mysql --user=raghu --password=rgpass
+    mysql: [Warning] Using a password on the command line interface can be insecure.
+    Welcome to the MySQL monitor.  Commands end with ; or \g.
+    Your MySQL connection id is 2
+    Server version: 5.7.24 MySQL Community Server (GPL)
+
+    Copyright (c) 2000, 2018, Oracle and/or its affiliates. All rights reserved.
+
+    Oracle is a registered trademark of Oracle Corporation and/or its
+    affiliates. Other names may be trademarks of their respective
+    owners.
+
+    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+    mysql> 
+    ```
+- Cleaning up `samplemysqlapp` resources:
+    ```
+    $ oc delete -f https://raw.githubusercontent.com/raghavendramallela/myopenshiftsetup/main/openshift/sampleappmysql.yaml
+
+    secret "samplemysqlsecret" deleted
+    deployment.apps "samplemysqlapp" deleted
+    service "samplemysqlapp" deleted
