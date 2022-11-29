@@ -60,13 +60,71 @@
     to build a new example application in Ruby. Or use kubectl to deploy a simple Kubernetes application:
 
         kubectl create deployment hello-node --image=k8s.gcr.io/e2e-test-images/agnhost:2.33 -- /agnhost serve-hostname
+- Deploy a sample nginx hello app:
+    ```
+    $ oc create -f https://raw.githubusercontent.com/raghavendramallela/myopenshiftsetup/main/openshift/samplenginx.yaml
+
+    Warning: would violate PodSecurity "restricted:v1.24": allowPrivilegeEscalation != false (container "samplenginx" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "samplenginx" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "samplenginx" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "samplenginx" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+
+    deployment.apps/samplenginx created
+    service/samplenginx created
+    route.route.openshift.io/samplenginx created
+    ```
+- Check `samplenginx` resources:
+    ```
+    $ oc get all -o wide
+
+    NAME                               READY   STATUS    RESTARTS   AGE    IP             NODE                 NOMINATED NODE   READINESS GATES
+    pod/samplenginx-74bd9f5dd6-jjj7w   1/1     Running   0          13s    10.217.0.208   crc-lgph7-master-0   <none>           <none>
+    pod/samplenginx-74bd9f5dd6-r725r   1/1     Running   0          2m6s   10.217.0.207   crc-lgph7-master-0   <none>           <none>
+
+    NAME                  TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)           AGE    SELECTOR
+    service/samplenginx   ClusterIP   10.217.5.228   <none>        80/TCP,8080/TCP   2m6s   deployment=samplenginx
+
+    NAME                          READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS    IMAGES                             SELECTOR
+    deployment.apps/samplenginx   2/2     2            2           2m6s   samplenginx   docker.io/nginxdemos/nginx-hello   deployment=samplenginx
+
+    NAME                                     DESIRED   CURRENT   READY   AGE    CONTAINERS    IMAGES                             SELECTOR
+    replicaset.apps/samplenginx-74bd9f5dd6   2         2         2       2m6s   samplenginx   docker.io/nginxdemos/nginx-hello   deployment=samplenginx,pod-template-hash=74bd9f5dd6
+
+    NAME                                   HOST/PORT                                 PATH   SERVICES      PORT       TERMINATION   WILDCARD
+    route.route.openshift.io/samplenginx   samplenginx-sampleproj.apps-crc.testing          samplenginx   8080-tcp                 None
+    ```
+- `lynx` the `samplenginx` in terminal: (or open lynx http://samplenginx-sampleproj.apps-crc.testing/ in a web-browser in the host-machine)
+    ```
+    $ lynx http://samplenginx-sampleproj.apps-crc.testing/
+                                                                                                                                                                                                                Hello World
+    NGINX Logo
+
+    Server address: 10.217.0.208:8080
+
+    Server name: samplenginx-74bd9f5dd6-jjj7w
+
+    Date: 29/Nov/2022:05:28:50 +0000
+
+    URI: /
+
+    [ ] Auto Refresh
+
+                                                                                    Request ID: c5ed937e3bb9de3ad49919c85877b5d0
+                                                                                                © F5 Networks, Inc. 2020
+
+- Cleaning up `samplenginx` resources:
+    ```
+    $ oc delete -f https://raw.githubusercontent.com/raghavendramallela/myopenshiftsetup/main/openshift/samplenginx.yaml
+
+    deployment.apps "samplenginx" deleted
+    service "samplenginx" deleted
+    route.route.openshift.io "samplenginx" deleted
     ```
 - Deploy a sample my sql app:
     ```
     $ oc create -f https://raw.githubusercontent.com/raghavendramallela/myopenshiftsetup/main/openshift/sampleappmysql.yaml
 
     secret/samplemysqlsecret created
+
     Warning: would violate PodSecurity "restricted:v1.24": allowPrivilegeEscalation != false (container "samplemysqlapp" must set securityContext.allowPrivilegeEscalation=false), unrestricted capabilities (container "samplemysqlapp" must set securityContext.capabilities.drop=["ALL"]), runAsNonRoot != true (pod or container "samplemysqlapp" must set securityContext.runAsNonRoot=true), seccompProfile (pod or container "samplemysqlapp" must set securityContext.seccompProfile.type to "RuntimeDefault" or "Localhost")
+    
     deployment.apps/samplemysqlapp created
     service/samplemysqlapp created
     ```
@@ -112,3 +170,4 @@
     secret "samplemysqlsecret" deleted
     deployment.apps "samplemysqlapp" deleted
     service "samplemysqlapp" deleted
+    ```

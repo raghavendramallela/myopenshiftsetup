@@ -1,0 +1,69 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  labels:
+    app: samplenginx
+    app.kubernetes.io/component: samplenginx
+    app.kubernetes.io/instance: samplenginx
+  name: samplenginx
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      deployment: samplenginx
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      labels:
+        deployment: samplenginx
+    spec:
+      containers:
+      - image: docker.io/nginxdemos/nginx-hello
+        name: samplenginx
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        - containerPort: 8080
+          protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  labels:
+    app: samplenginx
+    app.kubernetes.io/component: samplenginx
+    app.kubernetes.io/instance: samplenginx
+  name: samplenginx
+spec:
+  ports:
+  - name: 80-tcp
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  - name: 8080-tcp
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    deployment: samplenginx
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: samplenginx
+    app.kubernetes.io/component: samplenginx
+    app.kubernetes.io/instance: samplenginx
+  name: samplenginx
+spec:
+  port:
+    targetPort: 8080-tcp
+  to:
+    kind: ""
+    name: samplenginx
