@@ -402,6 +402,8 @@
 
 - Set up environment variables & start using `oc` (OpenShift-cli) commands:
     ```
+    $ crc oc-env
+    
     $ eval $(crc oc-env)
 
     $ oc login -u kubeadmin https://api.crc.testing:6443
