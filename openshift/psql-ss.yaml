@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: psql-ss
+spec:
+  selector:
+    matchLabels:
+      msvc: psql
+  serviceName: psql-svc
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        msvc: psql
+    spec:
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchExpressions:
+              - key: msvc
+                operator: In
+                values:
+                - psql
+            topologyKey: kubernetes.io/hostname
+      containers:
+      - name: psql
+        image: registry.access.redhat.com/rhscl/postgresql-96-rhel7
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: psqlport
+          containerPort: 5432
+          protocol: TCP
+        # volumeMounts:
+        # - name: psql-pvc
+        #   mountPath: /var/lib/pgsql/data
+        securityContext: 
+          runAsUser: 26
+          allowPrivilegeEscalation: true
+        env:
+        - name: POSTGRESQL_ADMIN_PASSWORD
+          value: rgpass
+  # volumeClaimTemplates:
+  # - metadata:
+  #     name: psql-pvc
+  #   spec:
+  #     accessModes: [ "ReadWriteMany" ]
+  #     resources:
+  #       requests:
+  #         storage: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: psql-svc
+spec:
+  selector:
+    msvc: psql
+  ports:
+  - port: 5432
+    targetPort: 5432
+
